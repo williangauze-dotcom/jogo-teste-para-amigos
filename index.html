@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quiz para maconheiros</title>
+        <meta name="description" content="Um quiz interativo para testar seus conhecimentos">
+        <style>
+            :root {
+                color-scheme: light;
+                --primary-950: #052412;
+                --primary-800: #0f5132;
+                --primary-600: #1f7a45;
+                --primary-400: #3aa262;
+                --primary-200: #b6e5c9;
+                --neutral-50: #edf7f0;
+                --neutral-900: #0b1e14;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.5;
+                margin: 0;
+                padding: 0;
+                background: radial-gradient(circle at top, rgba(58, 162, 98, 0.35), var(--neutral-50) 40%);
+                color: var(--neutral-900);
+            }
+
+            header,
+            main,
+            footer {
+                margin: 0 auto;
+                max-width: 900px;
+                padding: 1.5rem;
+            }
+
+            header {
+                text-align: center;
+                background: linear-gradient(140deg, rgba(31, 122, 69, 0.9), rgba(58, 162, 98, 0.9));
+                color: #fff;
+                border-bottom-left-radius: 18px;
+                border-bottom-right-radius: 18px;
+                box-shadow: 0 12px 24px rgba(5, 36, 18, 0.25);
+            }
+
+            h1 {
+                margin-bottom: 0.5rem;
+            }
+
+            section {
+                margin-bottom: 1.5rem;
+                background-color: rgba(255, 255, 255, 0.94);
+                padding: 1.25rem;
+                border-radius: 14px;
+                box-shadow: 0 8px 18px rgba(5, 36, 18, 0.15);
+                border: 1px solid rgba(182, 229, 201, 0.7);
+            }
+
+            form section h2 {
+                margin-top: 0;
+                color: var(--primary-800);
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            li + li {
+                margin-top: 0.5rem;
+            }
+
+            label {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                cursor: pointer;
+                padding: 0.35rem 0.5rem;
+                border-radius: 10px;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+            }
+
+            label:hover {
+                background-color: rgba(58, 162, 98, 0.12);
+                transform: translateX(3px);
+            }
+
+            button[type="submit"] {
+                display: block;
+                margin: 0 auto;
+                padding: 0.75rem 2.5rem;
+                font-size: 1rem;
+                border: none;
+                border-radius: 999px;
+                background: linear-gradient(120deg, var(--primary-600), var(--primary-400));
+                color: #fff;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            button[type="submit"]:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 18px rgba(5, 36, 18, 0.25);
+            }
+
+            #result {
+                margin-top: 1.5rem;
+                text-align: center;
+                font-weight: bold;
+                color: var(--primary-800);
+            }
+
+            .share-actions {
+                margin-top: 2rem;
+                text-align: center;
+            }
+
+            .share-actions button {
+                padding: 0.65rem 1.5rem;
+                margin: 0 0.5rem;
+                border: none;
+                border-radius: 999px;
+                background: linear-gradient(120deg, var(--primary-600), var(--primary-400));
+                color: #fff;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .share-actions button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 8px 16px rgba(5, 36, 18, 0.2);
+            }
+
+            #share-feedback {
+                margin-top: 0.75rem;
+                font-size: 0.95rem;
+                color: var(--primary-600);
+            }
+
+            .header-logo {
+                width: 120px;
+                max-width: 50%;
+                display: block;
+                margin: 0 auto 1.25rem auto;
+                filter: drop-shadow(0 6px 12px rgba(5, 36, 18, 0.4));
+            }
+
+            .result-details {
+                margin-top: 1.5rem;
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 14px;
+                padding: 1rem 1.25rem;
+                box-shadow: 0 6px 14px rgba(5, 36, 18, 0.18);
+                border: 1px solid rgba(182, 229, 201, 0.6);
+            }
+
+            .result-details h3 {
+                margin-top: 0;
+                color: var(--primary-800);
+            }
+
+            .result-details ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .result-details li {
+                margin-bottom: 0.75rem;
+                line-height: 1.4;
+            }
+
+            .result-details li:last-child {
+                margin-bottom: 0;
+            }
+
+            .is-correct {
+                background-color: rgba(58, 162, 98, 0.16);
+                outline: 2px solid rgba(31, 122, 69, 0.4);
+            }
+
+            .is-incorrect {
+                background-color: rgba(229, 107, 107, 0.16);
+                outline: 2px solid rgba(229, 107, 107, 0.4);
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <img src="img/istockphoto-1253289278-612x612.jpg" alt="Folha de cannabis verde" class="header-logo">
+            <h1>Bem-vindo ao Quiz para Maconheiros!</h1>
+            <p>Teste seus conhecimentos sobre maconha e cultura canábica.</p>
+        </header>
+        <main>
+            <section>
+                <h2>Sobre esse Quiz</h2>
+                <p>Este quiz foi criado para testar seus conhecimentos sobre <strong>maconha</strong> e sua <strong>cultura</strong> canábica. São perguntas de múltipla escolha que vão desde a história da planta até seus efeitos e usos.</p>
+                <p>Divirta-se e aprenda mais sobre esse tema fascinante!</p>
+                <p>Antes de começar <abbr title="FUME UM BASEADO">F1</abbr></p>
+                <p>Boa sorte!</p>
+            </section>
+            <form id="quiz-form">
+                <section>
+                    <h2>Pergunta 1: Qual é o principal composto psicoativo da maconha?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q1" value="a"> THC</label></li>
+                        <li><label><input type="radio" name="q1" value="b"> CBD</label></li>
+                        <li><label><input type="radio" name="q1" value="c"> CBN</label></li>
+                        <li><label><input type="radio" name="q1" value="d"> THCV</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 2: Qual é a principal forma de consumo da maconha?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q2" value="a"> Fumar</label></li>
+                        <li><label><input type="radio" name="q2" value="b"> Vaporizar</label></li>
+                        <li><label><input type="radio" name="q2" value="c"> Comer</label></li>
+                        <li><label><input type="radio" name="q2" value="d"> Todas as anteriores</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 3: Qual país foi o primeiro a legalizar a maconha para uso recreativo?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q3" value="a"> Uruguai</label></li>
+                        <li><label><input type="radio" name="q3" value="b"> Canadá</label></li>
+                        <li><label><input type="radio" name="q3" value="c"> Holanda</label></li>
+                        <li><label><input type="radio" name="q3" value="d"> Estados Unidos</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 4: Qual é o nome da planta da maconha?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q4" value="a"> Cannabis sativa</label></li>
+                        <li><label><input type="radio" name="q4" value="b"> Cannabis indica</label></li>
+                        <li><label><input type="radio" name="q4" value="c"> Cannabis ruderalis</label></li>
+                        <li><label><input type="radio" name="q4" value="d"> Todas as anteriores</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 5: Qual é o efeito mais comum da maconha?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q5" value="a"> Euforia</label></li>
+                        <li><label><input type="radio" name="q5" value="b"> Relaxamento</label></li>
+                        <li><label><input type="radio" name="q5" value="c"> Aumento do apetite</label></li>
+                        <li><label><input type="radio" name="q5" value="d"> Todos os anteriores</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 6: Qual é o nome do sistema do corpo humano que interage com os compostos da maconha?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q6" value="a"> Sistema nervoso</label></li>
+                        <li><label><input type="radio" name="q6" value="b"> Sistema endocanabinoide</label></li>
+                        <li><label><input type="radio" name="q6" value="c"> Sistema imunológico</label></li>
+                        <li><label><input type="radio" name="q6" value="d"> Sistema digestivo</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 7: Qual é o nome do processo de secagem e cura da maconha após a colheita?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q7" value="a"> Trimming</label></li>
+                        <li><label><input type="radio" name="q7" value="b"> Curing</label></li>
+                        <li><label><input type="radio" name="q7" value="c"> Harvesting</label></li>
+                        <li><label><input type="radio" name="q7" value="d"> Drying</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 8: Qual é o nome do composto não psicoativo da maconha conhecido por seus potenciais benefícios medicinais?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q8" value="a"> THC</label></li>
+                        <li><label><input type="radio" name="q8" value="b"> CBD</label></li>
+                        <li><label><input type="radio" name="q8" value="c"> CBN</label></li>
+                        <li><label><input type="radio" name="q8" value="d"> THCV</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 9: Qual é o nome do método de cultivo de maconha que utiliza luz artificial para estimular o crescimento das plantas?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q9" value="a"> Cultivo ao ar livre</label></li>
+                        <li><label><input type="radio" name="q9" value="b"> Cultivo hidropônico</label></li>
+                        <li><label><input type="radio" name="q9" value="c"> Cultivo indoor</label></li>
+                        <li><label><input type="radio" name="q9" value="d"> Cultivo orgânico</label></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Pergunta 10: Qual é o nome do efeito colateral comum da maconha que causa olhos vermelhos?</h2>
+                    <ul>
+                        <li><label><input type="radio" name="q10" value="a"> Boca seca</label></li>
+                        <li><label><input type="radio" name="q10" value="b"> Olhos vermelhos</label></li>
+                        <li><label><input type="radio" name="q10" value="c"> Aumento do apetite</label></li>
+                        <li><label><input type="radio" name="q10" value="d"> Sonolência</label></li>
+                    </ul>
+                </section>
+                <button type="submit">Enviar respostas</button>
+            </form>
+            <div id="result" role="status" aria-live="polite"></div>
+            <div id="detailed-feedback" class="result-details" hidden>
+                <h3>Resumo das respostas</h3>
+                <ul></ul>
+            </div>
+            <div class="share-actions">
+                <button type="button" id="share-button">Compartilhar este quiz</button>
+                <button type="button" id="copy-link-button">Copiar link</button>
+                <div id="share-feedback" role="status" aria-live="polite"></div>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2023 Meu Site de Cannabis</p>
+        </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('quiz-form');
+                const result = document.getElementById('result');
+                const shareButton = document.getElementById('share-button');
+                const copyLinkButton = document.getElementById('copy-link-button');
+                const shareFeedback = document.getElementById('share-feedback');
+                const detailedFeedback = document.getElementById('detailed-feedback');
+                const feedbackList = detailedFeedback.querySelector('ul');
+                const correctAnswers = {
+                    q1: 'a',
+                    q2: 'd',
+                    q3: 'a',
+                    q4: 'd',
+                    q5: 'd',
+                    q6: 'b',
+                    q7: 'b',
+                    q8: 'b',
+                    q9: 'c',
+                    q10: 'b'
+                };
+
+                const questionTitles = {};
+                Array.from(form.querySelectorAll('section')).forEach((section) => {
+                    const heading = section.querySelector('h2');
+                    const firstInput = section.querySelector('input[type="radio"]');
+                    if (heading && firstInput) {
+                        questionTitles[firstInput.name] = heading.textContent.trim();
+                    }
+                });
+
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    let score = 0;
+                    const unanswered = [];
+                    const resultsDetail = [];
+
+                    feedbackList.innerHTML = '';
+                    detailedFeedback.hidden = true;
+                    form.querySelectorAll('label').forEach((label) => {
+                        label.classList.remove('is-correct', 'is-incorrect');
+                    });
+
+                    Object.entries(correctAnswers).forEach(([question, answer], index) => {
+                        const selected = form.querySelector(`input[name="${question}"]:checked`);
+                        const correctInput = form.querySelector(`input[name="${question}"][value="${answer}"]`);
+                        const correctLabel = correctInput ? correctInput.parentElement : null;
+
+                        if (!selected) {
+                            unanswered.push(index + 1);
+                            resultsDetail.push({
+                                question,
+                                status: 'unanswered',
+                                title: questionTitles[question] || `Pergunta ${index + 1}`,
+                                correctLabel,
+                                correctText: getOptionText(correctLabel)
+                            });
+                            return;
+                        }
+
+                        const isCorrect = selected.value === answer;
+                        if (isCorrect) {
+                            score += 1;
+                        }
+
+                        resultsDetail.push({
+                            question,
+                            status: isCorrect ? 'correct' : 'incorrect',
+                            title: questionTitles[question] || `Pergunta ${index + 1}`,
+                            selectedLabel: selected.parentElement,
+                            selectedText: getOptionText(selected.parentElement),
+                            correctLabel,
+                            correctText: getOptionText(correctLabel)
+                        });
+                    });
+
+                    if (unanswered.length > 0) {
+                        result.textContent = `Responda todas as perguntas (faltam: ${unanswered.join(', ')}).`;
+                        return;
+                    }
+
+                    const total = Object.keys(correctAnswers).length;
+                    const percentage = Math.round((score / total) * 100);
+                    let message = `Você acertou ${score} de ${total} perguntas (${percentage}%).`;
+
+                    if (percentage === 100) {
+                        message += ' Parabéns!';
+                    } else if (percentage >= 70) {
+                        message += ' Mandou bem!';
+                    } else {
+                        message += ' Continue estudando e tente novamente.';
+                    }
+
+                    result.textContent = message;
+                    renderDetailedFeedback(resultsDetail);
+                    detailedFeedback.hidden = false;
+                });
+
+                shareButton.addEventListener('click', async () => {
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: document.title,
+                                text: 'Faça o quiz e descubra sua pontuação!',
+                                url: window.location.href
+                            });
+                            shareFeedback.textContent = 'Convite enviado!';
+                        } catch (error) {
+                            shareFeedback.textContent = 'Não foi possível compartilhar agora.';
+                        }
+                        return;
+                    }
+
+                    copyCurrentUrl();
+                });
+
+                copyLinkButton.addEventListener('click', () => {
+                    copyCurrentUrl();
+                });
+
+                function copyCurrentUrl() {
+                    if (!navigator.clipboard) {
+                        shareFeedback.textContent = 'Copie o endereço do navegador manualmente.';
+                        return;
+                    }
+
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => {
+                            shareFeedback.textContent = 'Link copiado! Agora é só enviar.';
+                        })
+                        .catch(() => {
+                            shareFeedback.textContent = 'Não foi possível copiar o link automaticamente.';
+                        });
+                }
+
+                function renderDetailedFeedback(results) {
+                    feedbackList.innerHTML = '';
+
+                    results.forEach((item) => {
+                        const correctLabel = item.correctLabel;
+                        const selectedLabel = item.selectedLabel;
+
+                        if (item.status === 'correct' && selectedLabel) {
+                            selectedLabel.classList.add('is-correct');
+                        } else if (item.status === 'incorrect') {
+                            if (selectedLabel) {
+                                selectedLabel.classList.add('is-incorrect');
+                            }
+                            if (correctLabel) {
+                                correctLabel.classList.add('is-correct');
+                            }
+                        } else if (item.status === 'unanswered' && correctLabel) {
+                            correctLabel.classList.add('is-correct');
+                        }
+
+                        const li = document.createElement('li');
+
+                        if (item.status === 'correct') {
+                            li.textContent = `✅ ${item.title} — Você acertou! Resposta correta: ${item.correctText}.`;
+                        } else if (item.status === 'incorrect') {
+                            li.textContent = `❌ ${item.title} — Você respondeu "${item.selectedText}", mas o certo é "${item.correctText}".`;
+                        } else {
+                            li.textContent = `⚠️ ${item.title} — Você não respondeu. Resposta correta: ${item.correctText}.`;
+                        }
+
+                        feedbackList.appendChild(li);
+                    });
+                }
+
+                function getOptionText(label) {
+                    return label ? label.textContent.replace(/\s+/g, ' ').trim() : '';
+                }
+            });
+        </script>
+    </body>
+</html>
